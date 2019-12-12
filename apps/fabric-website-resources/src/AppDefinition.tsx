@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { IAppDefinition, IAppLink, ApiReferencesTableSet } from '@uifabric/example-app-base';
-import { DetailsListBasicExample } from 'office-ui-fabric-react/lib/components/DetailsList/examples/DetailsList.Basic.Example';
 import { mergeStyles } from 'office-ui-fabric-react/lib/Styling';
 import { AppCustomizations } from './customizations/customizations';
+import { ContextualMenuBasicExample } from 'office-ui-fabric-react/lib/components/ContextualMenu/examples/ContextualMenu.Basic.Example';
 
 const propertiesTableMargins = mergeStyles({
   marginLeft: '40px',
@@ -28,7 +28,7 @@ export const AppDefinition: IAppDefinition = {
   customizations: AppCustomizations,
   testPages: [
     {
-      component: DetailsListBasicExample,
+      component: ContextualMenuBasicExample as any,
       key: 'DetailsListBasicExample',
       name: 'DetailsListBasicExample',
       url: '#/tests/detailslistbasicexample'

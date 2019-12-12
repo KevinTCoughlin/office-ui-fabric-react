@@ -125,6 +125,17 @@ export class SelectionZone extends BaseComponent<ISelectionZoneProps, {}> {
     this._events.on(document.body, 'touchend', this._onTouchStartCapture, true);
   }
 
+  public componentWillUnmount(): void {
+    const win = getWindow(this._root.current);
+
+    // Track the latest modifier keys globally.
+    this._events.off(win, 'keydown', this._updateModifiers);
+    this._events.off(win, 'keyup', this._updateModifiers);
+    this._events.off(document, 'click', this._findScrollParentAndTryClearOnEmptyClick);
+    this._events.off(document.body, 'touchstart', this._onTouchStartCapture);
+    this._events.off(document.body, 'touchend', this._onTouchStartCapture);
+  }
+
   public render(): JSX.Element {
     return (
       <div
