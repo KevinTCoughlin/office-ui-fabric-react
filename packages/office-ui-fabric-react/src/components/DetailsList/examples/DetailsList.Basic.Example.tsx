@@ -1,15 +1,5 @@
 import * as React from 'react';
-import { Announced } from 'office-ui-fabric-react/lib/Announced';
-import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { DetailsList, DetailsListLayoutMode, Selection, IColumn } from 'office-ui-fabric-react/lib/DetailsList';
-import { MarqueeSelection } from 'office-ui-fabric-react/lib/MarqueeSelection';
-import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
-import { mergeStyles } from 'office-ui-fabric-react/lib/Styling';
-
-const exampleChildClass = mergeStyles({
-  display: 'block',
-  marginBottom: '10px'
-});
 
 export interface IDetailsListBasicExampleItem {
   key: number;
@@ -20,6 +10,7 @@ export interface IDetailsListBasicExampleItem {
 export interface IDetailsListBasicExampleState {
   items: IDetailsListBasicExampleItem[];
   selectionDetails: string;
+  showList: boolean;
 }
 
 export class DetailsListBasicExample extends React.Component<{}, IDetailsListBasicExampleState> {
@@ -36,7 +27,7 @@ export class DetailsListBasicExample extends React.Component<{}, IDetailsListBas
 
     // Populate with items for demos.
     this._allItems = [];
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < 10; i++) {
       this._allItems.push({
         key: i,
         name: 'Item ' + i,
@@ -51,25 +42,18 @@ export class DetailsListBasicExample extends React.Component<{}, IDetailsListBas
 
     this.state = {
       items: this._allItems,
-      selectionDetails: this._getSelectionDetails()
+      selectionDetails: this._getSelectionDetails(),
+      showList: true
     };
   }
 
   public render(): JSX.Element {
-    const { items, selectionDetails } = this.state;
+    const { items } = this.state;
 
     return (
-      <Fabric>
-        <div className={exampleChildClass}>{selectionDetails}</div>
-        <Announced message={selectionDetails} />
-        <TextField
-          className={exampleChildClass}
-          label="Filter by name:"
-          onChange={this._onFilter}
-          styles={{ root: { maxWidth: '300px' } }}
-        />
-        <Announced message={`Number of items after filter applied: ${items.length}.`} />
-        <MarqueeSelection selection={this._selection}>
+      <>
+        <button onClick={this._onToggle}>Toggle</button>
+        {this.state.showList && (
           <DetailsList
             items={items}
             columns={this._columns}
@@ -82,10 +66,14 @@ export class DetailsListBasicExample extends React.Component<{}, IDetailsListBas
             checkButtonAriaLabel="Row checkbox"
             onItemInvoked={this._onItemInvoked}
           />
-        </MarqueeSelection>
-      </Fabric>
+        )}
+      </>
     );
   }
+
+  private _onToggle = () => {
+    this.setState({ showList: !this.state.showList });
+  };
 
   private _getSelectionDetails(): string {
     const selectionCount = this._selection.getSelectedCount();
@@ -99,12 +87,6 @@ export class DetailsListBasicExample extends React.Component<{}, IDetailsListBas
         return `${selectionCount} items selected`;
     }
   }
-
-  private _onFilter = (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, text: string): void => {
-    this.setState({
-      items: text ? this._allItems.filter(i => i.name.toLowerCase().indexOf(text) > -1) : this._allItems
-    });
-  };
 
   private _onItemInvoked = (item: IDetailsListBasicExampleItem): void => {
     alert(`Item invoked: ${item.name}`);
