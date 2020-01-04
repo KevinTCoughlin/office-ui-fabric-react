@@ -3,7 +3,6 @@ import {
   Async,
   EventGroup,
   IRectangle,
-  IRenderFunction,
   css,
   divProperties,
   findIndex,
@@ -136,7 +135,7 @@ export class List<T = any> extends React.Component<IListProps<T>, IListState<T>>
   constructor(props: IListProps<T>) {
     super(props);
 
-    initializeComponentRef(this);
+    // initializeComponentRef(this);
 
     this.state = {
       pages: [],
@@ -323,6 +322,9 @@ export class List<T = any> extends React.Component<IListProps<T>, IListState<T>>
     // this._onAsyncIdle();
     // this._onAsyncResize();
     // this._onAsyncScroll();
+    delete this._scrollElement;
+    this.refs = {};
+    delete this._pageCache;
 
     this._async.dispose();
     this._events.dispose();
@@ -438,20 +440,14 @@ export class List<T = any> extends React.Component<IListProps<T>, IListState<T>>
     }
 
     const pageStyle = this._getPageStyle(page);
-
-    const { onRenderPage = this._onRenderPage } = this.props;
-
-    const pageElement = onRenderPage(
-      {
-        page: page,
-        className: 'ms-List-page',
-        key: page.key,
-        ref: page.key,
-        style: pageStyle,
-        role: 'presentation'
-      },
-      this._onRenderPage
-    );
+    const pageElement = this._onRenderPage({
+      page: page,
+      className: 'ms-List-page',
+      key: page.key,
+      ref: page.key,
+      style: pageStyle,
+      role: 'presentation'
+    });
 
     // cache the first page for now since it is re-rendered a lot times unnecessarily.
     // todo: a more aggresive caching mechanism is to cache pages constaining the items not changed.
@@ -480,7 +476,7 @@ export class List<T = any> extends React.Component<IListProps<T>, IListState<T>>
     };
   }
 
-  private _onRenderPage = (pageProps: IPageProps<T>, defaultRender?: IRenderFunction<IPageProps<T>>): any => {
+  private _onRenderPage(pageProps: IPageProps<T>): any {
     const { onRenderCell, role } = this.props;
 
     const {
@@ -510,7 +506,7 @@ export class List<T = any> extends React.Component<IListProps<T>, IListState<T>>
     }
 
     return <div {...divProps}>{cells}</div>;
-  };
+  }
 
   /** Track the last item index focused so that we ensure we keep it rendered. */
   private _onFocus(ev: any): void {
