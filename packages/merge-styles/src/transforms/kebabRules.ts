@@ -1,9 +1,8 @@
-const rules: { [key: string]: string } = {};
-
-export function kebabRules(rulePairs: (string | number)[], index: number): void {
-  const rule: string = rulePairs[index] as string;
-
-  if (rule.charAt(0) !== '-') {
-    rulePairs[index] = rules[rule] = rules[rule] || rule.replace(/([A-Z])/g, '-$1').toLowerCase();
+export function kebabRules(key: string): string {
+  if (key.charAt(0) !== '-') {
+    // @todo(keco): worth hoisting RegExp?
+    return key.replace(/([A-Z])/g, '-$1').toLowerCase();
+  } else {
+    return key;
   }
 }

@@ -11,15 +11,12 @@ const NON_PIXEL_NUMBER_PROPS = [
   'zoom',
 ];
 
-export function provideUnits(rulePairs: (string | number)[], index: number): void {
-  const name = rulePairs[index] as string;
-  const value = rulePairs[index + 1];
+export function provideUnits(value: number): string {
+  // @todo(keco): refactor to be single linear
+  const stringifiedValue = value + '';
+  const isNonPixelProp = NON_PIXEL_NUMBER_PROPS.indexOf(stringifiedValue) > -1;
+  const isVariableOrPrefixed = stringifiedValue.indexOf('--') > -1;
+  const unit = isNonPixelProp || isVariableOrPrefixed ? '' : 'px';
 
-  if (typeof value === 'number') {
-    const isNonPixelProp = NON_PIXEL_NUMBER_PROPS.indexOf(name as string) > -1;
-    const isVariableOrPrefixed = name.indexOf('--') > -1;
-    const unit = isNonPixelProp || isVariableOrPrefixed ? '' : 'px';
-
-    rulePairs[index + 1] = `${value}${unit}`;
-  }
+  return `${value}${unit}`;
 }

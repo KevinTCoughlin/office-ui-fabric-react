@@ -212,10 +212,20 @@ export function serializeRuleEntries(options: IStyleOptions, ruleEntries: { [key
 
   // Apply transforms.
   for (let i = 0; i < allEntries.length; i += 2) {
-    kebabRules(allEntries, i);
-    provideUnits(allEntries, i);
-    rtlifyRules(options, allEntries, i);
-    prefixRules(allEntries, i);
+    // @todo: refactor out typeassertion
+    let key: string = allEntries[i] + '';
+    let value: string | number = allEntries[i + 1];
+
+    key = kebabRules(key);
+
+    if (typeof value === 'number') {
+      value = provideUnits(value as number);
+    }
+
+    // @todo(keco): need to utilize the return values here, they were modifying array in-line
+    rtlifyRules(options, newKey, value);
+
+    newKey = prefixRules(newKey);
   }
 
   // Apply punctuation.

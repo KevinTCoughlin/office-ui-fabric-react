@@ -17,38 +17,43 @@ const VALUE_REPLACEMENTS: { [key: string]: string } = {
  * RTLifies the rulePair in the array at the current index. This mutates the array for performance
  * reasons.
  */
-export function rtlifyRules(options: IStyleOptions, rulePairs: (string | number)[], index: number): void {
+export function rtlifyRules(options: IStyleOptions, key: string /** not realy possible number */, value: string): void {
   if (options.rtl) {
-    const name = rulePairs[index] as string;
-
-    if (!name) {
+    if (!key) {
       return;
     }
 
-    const value = rulePairs[index + 1] as string;
+    if (typeof key === 'number') {
+      key = key + '';
+    }
 
+    if (typeof value === 'number') {
+      value = value + '';
+    }
+
+    // @todo(keco): don't do multiple linear scans in conditional clauses..
     if (typeof value === 'string' && value.indexOf(NO_FLIP) >= 0) {
-      rulePairs[index + 1] = value.replace(/\s*(?:\/\*\s*)?\@noflip\b(?:\s*\*\/)?\s*?/g, '');
-    } else if (name.indexOf(LEFT) >= 0) {
-      rulePairs[index] = name.replace(LEFT, RIGHT);
-    } else if (name.indexOf(RIGHT) >= 0) {
-      rulePairs[index] = name.replace(RIGHT, LEFT);
-    } else if (String(value).indexOf(LEFT) >= 0) {
-      rulePairs[index + 1] = value.replace(LEFT, RIGHT);
-    } else if (String(value).indexOf(RIGHT) >= 0) {
-      rulePairs[index + 1] = value.replace(RIGHT, LEFT);
-    } else if (NAME_REPLACEMENTS[name]) {
-      rulePairs[index] = NAME_REPLACEMENTS[name];
+      value = value.replace(/\s*(?:\/\*\s*)?\@noflip\b(?:\s*\*\/)?\s*?/g, '');
+    } else if (key.indexOf(LEFT) >= 0) {
+      key = key.replace(LEFT, RIGHT);
+    } else if (key.indexOf(RIGHT) >= 0) {
+      key = key.replace(RIGHT, LEFT);
+    } else if (value.indexOf(LEFT) >= 0) {
+      value = value.replace(LEFT, RIGHT);
+    } else if (value.indexOf(RIGHT) >= 0) {
+      value = value.replace(RIGHT, LEFT);
+    } else if (NAME_REPLACEMENTS[key]) {
+      key = NAME_REPLACEMENTS[key];
     } else if (VALUE_REPLACEMENTS[value]) {
-      rulePairs[index + 1] = VALUE_REPLACEMENTS[value];
+      value = VALUE_REPLACEMENTS[value];
     } else {
-      switch (name) {
+      switch (key) {
         case 'margin':
         case 'padding':
-          rulePairs[index + 1] = flipQuad(value);
+          value = flipQuad(value);
           break;
         case 'box-shadow':
-          rulePairs[index + 1] = negateNum(value, 0);
+          value = negateNum(value, 0);
           break;
       }
     }

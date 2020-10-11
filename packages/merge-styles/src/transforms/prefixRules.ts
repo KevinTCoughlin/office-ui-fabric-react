@@ -3,28 +3,22 @@ import { getVendorSettings } from '../getVendorSettings';
 const autoPrefixNames: { [key: string]: number } = {
   'user-select': 1,
 };
+const vendorSettings = getVendorSettings();
 
-export function prefixRules(rulePairs: (string | number)[], index: number): void {
-  const vendorSettings = getVendorSettings();
-
-  const name = rulePairs[index];
-
-  if (autoPrefixNames[name]) {
-    const value = rulePairs[index + 1];
-
-    if (autoPrefixNames[name]) {
-      if (vendorSettings.isWebkit) {
-        rulePairs.push('-webkit-' + name, value);
-      }
-      if (vendorSettings.isMoz) {
-        rulePairs.push('-moz-' + name, value);
-      }
-      if (vendorSettings.isMs) {
-        rulePairs.push('-ms-' + name, value);
-      }
-      if (vendorSettings.isOpera) {
-        rulePairs.push('-o-' + name, value);
-      }
+export function prefixRules(key: string): string {
+  if (autoPrefixNames[key]) {
+    if (vendorSettings.isWebkit) {
+      return `-webkit-${key}`;
+    }
+    if (vendorSettings.isMoz) {
+      return `-moz-${key}`;
+    }
+    if (vendorSettings.isMs) {
+      return `-ms-${key}`;
+    }
+    if (vendorSettings.isOpera) {
+      return `-o-${key}`;
     }
   }
+  return '';
 }
