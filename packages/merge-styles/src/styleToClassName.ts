@@ -203,6 +203,7 @@ export function serializeRuleEntries(options: IStyleOptions, ruleEntries: { [key
   }
 
   const allEntries: (string | number)[] = [];
+  let resultString: string = '';
 
   for (const entry in ruleEntries) {
     if (ruleEntries.hasOwnProperty(entry) && entry !== DISPLAY_NAME && ruleEntries[entry] !== undefined) {
@@ -222,18 +223,18 @@ export function serializeRuleEntries(options: IStyleOptions, ruleEntries: { [key
       value = provideUnits(value as number);
     }
 
-    // @todo(keco): need to utilize the return values here, they were modifying array in-line
-    rtlifyRules(options, newKey, value);
+    // @todo(keco): improve return value
+    const { key: newKey, value: newValue } = rtlifyRules(options, key, value);
 
-    newKey = prefixRules(newKey);
+    value = newValue ?? value;
+    key = newKey ?? key;
+
+    key = prefixRules(key);
+
+    resultString += `${key}:${value};`;
   }
 
-  // Apply punctuation.
-  for (let i = 1; i < allEntries.length; i += 4) {
-    allEntries.splice(i, 1, ':', allEntries[i], ';');
-  }
-
-  return allEntries.join('');
+  return resultString;
 }
 
 export interface IRegistration {

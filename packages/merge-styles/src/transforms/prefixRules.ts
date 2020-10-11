@@ -20,5 +20,5 @@ export function prefixRules(key: string): string {
       return `-o-${key}`;
     }
   }
-  return '';
+  return key;
 }

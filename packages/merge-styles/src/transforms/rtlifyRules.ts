@@ -17,20 +17,13 @@ const VALUE_REPLACEMENTS: { [key: string]: string } = {
  * RTLifies the rulePair in the array at the current index. This mutates the array for performance
  * reasons.
  */
-export function rtlifyRules(options: IStyleOptions, key: string /** not realy possible number */, value: string): void {
+export function rtlifyRules(
+  options: IStyleOptions,
+  key: string /** not realy possible number */,
+  value: string,
+): { key?: string; value?: string } {
+  // @todo empty regression
   if (options.rtl) {
-    if (!key) {
-      return;
-    }
-
-    if (typeof key === 'number') {
-      key = key + '';
-    }
-
-    if (typeof value === 'number') {
-      value = value + '';
-    }
-
     // @todo(keco): don't do multiple linear scans in conditional clauses..
     if (typeof value === 'string' && value.indexOf(NO_FLIP) >= 0) {
       value = value.replace(/\s*(?:\/\*\s*)?\@noflip\b(?:\s*\*\/)?\s*?/g, '');
@@ -58,6 +51,8 @@ export function rtlifyRules(options: IStyleOptions, key: string /** not realy po
       }
     }
   }
+
+  return { key, value };
 }
 
 /**
